@@ -13,8 +13,7 @@ package debug
 	 */
 	public class IConsole extends Console
 	{
-		private var _note:ConsoleNote;
-		private var _noteVisible:Boolean;
+		private var _consoleVisible:Boolean;
 		private var _outputPane:TextField;
 		private var _mouseXY:TextField;
 		private var _cameraXY:TextField;
@@ -41,30 +40,24 @@ package debug
 			_FPS = 0;
 			_FPSTimer = 60;
 			_FPSVec = new Vector.<uint>();
-			_tDelay = 100;
+			_tDelay = 20;
 		}
 		
-		public function showNote():void
+		public function show():void
 		{
-			if (!_noteVisible)
+			if (!_consoleVisible)
 			{
-				if (!_note) _note = new ConsoleNote();
-				_note.x = this.width - _note.width;
-				_note.y = this.height - _note.height;
-				_note.alpha = 0;
-				addChild(_note);
-				_noteVisible = true;
-				TweenLite.from(_note, 1, { alpha: 0, y: this.height } );
-				if (this.visible) this.visible = false;
+				this.alpha = 1;
+				_consoleVisible = true;
 			}
 		}
 		
-		public function hideNote():void
+		public function hide():void
 		{
-			if (_note && _noteVisible)
+			if (_consoleVisible)
 			{
-				TweenLite.to(_note, .5, { alpha: 0, y: this.height, onComplete: removeChild, onCompleteParams: [_note] } );
-				this.visible = true;
+				this.alpha = 0;
+				_consoleVisible = false;
 			}
 		}
 		
@@ -79,12 +72,14 @@ package debug
 		
 		public function setSelection(e:MouseEvent):void
 		{
-			_selection = e.currentTarget;
+			_selection = e.target;
 		}
 		
 		public function update():void
 		{
 			_mouseXY.text = "X: " + mouseX + ", Y: " + mouseY;
+			currentFPS();
+			testMemory();
 			if (_vCam) _cameraXY.text = _vCam.x + ", " + _vCam.y;
 			if (_selection) 
 			{
@@ -96,14 +91,13 @@ package debug
 			{
 				if (Key.isDown(Key.T))
 				{
-					if (_noteVisible) hideNote();
-					else showNote();
-					_tDelay = 100;
+					if (_consoleVisible) hide();
+					else show();
+					_tDelay = 20;
 				}
 			}
 			else --_tDelay;
-			currentFPS();
-			testMemory();
+			
 		}
 		
 		public function init(location:DisplayObjectContainer):void 
@@ -141,6 +135,7 @@ package debug
 				_FPS = 0;
 				_FPSTimer = 60;
 			}
+			else --_FPSTimer;
 		}
 		
 		public function addDebugMouseListeners(dOC:DisplayObjectContainer):uint
