@@ -209,6 +209,8 @@ package core
 				trace("GO!!");
 				matchStarted = true;
 				_vCam.CAMERA_MODE = _vCam.NORMAL_MODE;
+				Main.CONSOLE.setCamera(_vCam);
+				Main.CONSOLE.mouseEnabled = false;
 				_countdownTimer.stop();
 				_countdownTimer.removeEventListener(TimerEvent.TIMER, countdown);
 			}
@@ -222,6 +224,7 @@ package core
 				playerTwo.update();
 				_vCam.PERFORMALL();
 				updatePhysics();
+				Main.CONSOLE.update();
 			}
 			else 
 			{

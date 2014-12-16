@@ -3,6 +3,7 @@ package core
 	import core.AI;
 	import core.Animation;
 	import debug.log;
+	import debug.println;
 	import enums.CState;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -57,7 +58,6 @@ package core
 		private var _CPU:AI;
 		private var _isCPU:Boolean;
 		private var _cpuLevel:uint;
-		
 		private var _currentState:uint;
 		private var _isOnGround:Boolean;
 		private var _layDownDelay:uint;
@@ -214,7 +214,7 @@ package core
 		private function setState(state:uint):void 
 		{
 			_currentState = state;
-			trace(CState.toString(_currentState));
+			println(CState.toString(_currentState));
 			//UMIBEventManager.dispatchEvent(new UMIBEvent(UMIBEvent.STATE_CHANGE));
 		}
 		
@@ -251,13 +251,13 @@ package core
 				if (getTimer() - _comboInterval > MAX_COMBO_INTERVAL) 
 				{
 					_pressedKeys = [];
-					log.it(LOG_ID, "input array cleared");
+					println( "input array cleared");
 				}
 				if (!_keyDelay) 
 				{
 					_comboInterval = getTimer();
 					_pressedKeys.push(_gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection));
-					log.it(LOG_ID, _gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection));
+					println( _gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection));
 					_keyDelay = 5;
 					checkForCombo();
 				}
@@ -388,7 +388,7 @@ package core
 				if (_pressedKeys.join(" ").indexOf((_comboDictionary[comboName] as Array).join(" ")) > -1)
 				{
 					comboFound = comboName;
-					log.it(LOG_ID, comboName);
+					println( comboName);
 					break;
 				}
 			}
@@ -400,12 +400,12 @@ package core
 		{
 			if (_comboDictionary[comboName])
 			{
-				log.it(LOG_ID, "Can not register the combo \"" +  comboName + "\"; it already exists in the character's combo dictionary.\nCheck your registerCombo() calls.");
+				println( "Can not register the combo \"" +  comboName + "\"; it already exists in the character's combo dictionary.\nCheck your registerCombo() calls.");
 				return;
 			}
 			
 			_comboDictionary[comboName] = comboKeys;
-			log.it(LOG_ID, "The combo \"" + comboName + "\" was registered.");
+			println("The combo \"" + comboName + "\" was registered.");
 		}
 		
 		public function addAnimation(name:String, numFrames:uint, fps:Number = 30, isLoop:Boolean = false):void
@@ -414,7 +414,7 @@ package core
 			
 			if (_animations[name])
 			{
-				log.it("Character", "An attempt to add the animation '" + name + "' to " + _name + "'s animation list (multiple times) was made! please check " + _name + "'s character.addAnimation() function list.");
+				println( "An attempt to add the animation '" + name + "' to " + _name + "'s animation list (multiple times) was made! please check " + _name + "'s character.addAnimation() function list.");
 				return;
 			}
 			
@@ -427,12 +427,12 @@ package core
 		{
 			if (!_animations) 
 			{
-				log.it("Character", "There are no animations present in " + _name + "'s character. please check " + _name + "'s character.addAnimation() function list.");
+				println( "There are no animations present in " + _name + "'s character. please check " + _name + "'s character.addAnimation() function list.");
 				return;
 			}
 			if (!_animations[name]) 
 			{
-				log.it("Character", "An animation named " + name + " was not found in " + _name + "'s animation object. Please check " + _name + "'s character.addAnimation() function list.");
+				println( "An animation named " + name + " was not found in " + _name + "'s animation object. Please check " + _name + "'s character.addAnimation() function list.");
 				return;
 			}
 			

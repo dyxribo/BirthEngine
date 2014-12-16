@@ -41,6 +41,7 @@
       <path-element>F:\Dropbox\AS3\BirthEngine\src\utils\as3corelib.swc</path-element>
       <path-element>F:\Dropbox\AS3\BirthEngine\src\utils\as3crypto.swc</path-element>
       <path-element>F:\Dropbox\AS3\BirthEngine\src\utils\greensock.swc</path-element>
+      <path-element>F:\Dropbox\AS3\BirthEngine\engine_assets.swc</path-element>
     </library-path>
   </compiler>
   <file-specs>
@@ -49,7 +50,7 @@
   <default-background-color>#FFFFFF</default-background-color>
   <default-frame-rate>60</default-frame-rate>
   <default-size>
-    <width>800</width>
-    <height>600</height>
+    <width>1280</width>
+    <height>720</height>
   </default-size>
 </flex-config>

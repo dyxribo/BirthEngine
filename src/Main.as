@@ -2,6 +2,7 @@ package
 {
 	import com.greensock.TweenLite;
 	import core.GameState;
+	import debug.IConsole;
 	import enums.MatchObject;
 	import enums.MatchTime;
 	import enums.MatchType;
@@ -20,6 +21,7 @@ package
 	{
 		static public const FRAMERATE:uint = 60;
 		static public var STAGE:Stage;
+		static public var CONSOLE:IConsole;
 		
 		private var _gameState:GameState;
 		private var _loadingScreen:Sprite;
@@ -34,9 +36,14 @@ package
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			STAGE = stage;
 			// ENTRY POINT
+			CONSOLE = new IConsole();
+			addChild(Main.CONSOLE);
+			Main.CONSOLE.init(this);
+			
 			synthesizeMatchData();
 			_gameState = new GameState();
 			addChild(_gameState);
+			swapChildren(_gameState, CONSOLE);
 			drawLoadScreen();
 			UMIBEventManager.addEventListener(UMIBEvent.MATCH_LOAD_COMPLETE, removeLoadingScreen);
 		}	

@@ -6,8 +6,8 @@
     <movie input="" />
     <movie path="bin\BirthEngine.swf" />
     <movie fps="60" />
-    <movie width="800" />
-    <movie height="600" />
+    <movie width="1280" />
+    <movie height="720" />
     <movie version="14" />
     <movie minorVersion="0" />
     <movie platform="Flash Player" />
@@ -55,6 +55,7 @@
     <element path="src\utils\as3corelib.swc" />
     <element path="src\utils\as3crypto.swc" />
     <element path="src\utils\greensock.swc" />
+    <element path="engine_assets.swc" />
   </libraryPaths>
   <!-- External Libraries -->
   <externalLibraryPaths>
