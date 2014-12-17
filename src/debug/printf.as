@@ -5,12 +5,12 @@ package debug
 	 * @author Psycho
 	 */
 
-	public function println(...rest):String
+	public function printf(...rest):String
 	{
 		var finalString:String = "";
 		for each(var item:* in rest) 
 		{
-			Main.CONSOLE.appendOutput(item + "\n");
+			if (item) Main.CONSOLE.appendOutput(item + "\n");
 			finalString += item + "\n";
 		}
 		return finalString;

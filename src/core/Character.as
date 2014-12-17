@@ -3,7 +3,7 @@ package core
 	import core.AI;
 	import core.Animation;
 	import debug.log;
-	import debug.println;
+	import debug.printf;
 	import enums.CState;
 	import flash.display.BitmapData;
 	import flash.display.Sprite;
@@ -214,7 +214,7 @@ package core
 		private function setState(state:uint):void 
 		{
 			_currentState = state;
-			println(CState.toString(_currentState));
+			printf(CState.toString(_currentState));
 			//UMIBEventManager.dispatchEvent(new UMIBEvent(UMIBEvent.STATE_CHANGE));
 		}
 		
@@ -251,13 +251,14 @@ package core
 				if (getTimer() - _comboInterval > MAX_COMBO_INTERVAL) 
 				{
 					_pressedKeys = [];
-					println( "input array cleared");
+					printf( "input array cleared");
 				}
 				if (!_keyDelay) 
 				{
 					_comboInterval = getTimer();
-					_pressedKeys.push(_gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection));
-					println( _gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection));
+					var key:String = _gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection);
+					_pressedKeys.push(key);
+					printf((key != undefined) ? key : null);
 					_keyDelay = 5;
 					checkForCombo();
 				}
@@ -388,7 +389,7 @@ package core
 				if (_pressedKeys.join(" ").indexOf((_comboDictionary[comboName] as Array).join(" ")) > -1)
 				{
 					comboFound = comboName;
-					println( comboName);
+					printf( comboName);
 					break;
 				}
 			}
@@ -400,12 +401,12 @@ package core
 		{
 			if (_comboDictionary[comboName])
 			{
-				println( "Can not register the combo \"" +  comboName + "\"; it already exists in the character's combo dictionary.\nCheck your registerCombo() calls.");
+				printf( "Can not register the combo \"" +  comboName + "\"; it already exists in the character's combo dictionary.\nCheck your registerCombo() calls.");
 				return;
 			}
 			
 			_comboDictionary[comboName] = comboKeys;
-			println("The combo \"" + comboName + "\" was registered.");
+			printf("The combo \"" + comboName + "\" was registered.");
 		}
 		
 		public function addAnimation(name:String, numFrames:uint, fps:Number = 30, isLoop:Boolean = false):void
@@ -414,7 +415,7 @@ package core
 			
 			if (_animations[name])
 			{
-				println( "An attempt to add the animation '" + name + "' to " + _name + "'s animation list (multiple times) was made! please check " + _name + "'s character.addAnimation() function list.");
+				printf( "An attempt to add the animation '" + name + "' to " + _name + "'s animation list (multiple times) was made! please check " + _name + "'s character.addAnimation() function list.");
 				return;
 			}
 			
@@ -427,12 +428,12 @@ package core
 		{
 			if (!_animations) 
 			{
-				println( "There are no animations present in " + _name + "'s character. please check " + _name + "'s character.addAnimation() function list.");
+				printf( "There are no animations present in " + _name + "'s character. please check " + _name + "'s character.addAnimation() function list.");
 				return;
 			}
 			if (!_animations[name]) 
 			{
-				println( "An animation named " + name + " was not found in " + _name + "'s animation object. Please check " + _name + "'s character.addAnimation() function list.");
+				printf( "An animation named " + name + " was not found in " + _name + "'s animation object. Please check " + _name + "'s character.addAnimation() function list.");
 				return;
 			}
 			

@@ -3,6 +3,7 @@ package core
 	import core.Arena;
 	import core.Character;
 	import core.RecLoader;
+	import debug.printf;
 	import enums.MatchObject;
 	import enums.Resources;
 	import enums.ResourceType;
@@ -202,11 +203,11 @@ package core
 		private function countdown(e:TimerEvent):void 
 		{
 			--_countdownTime
-			if (_countdownTime == 3) trace("ready???");
+			if (_countdownTime == 3) printf("ready???");
 			
 			if (!_countdownTime) 
 			{
-				trace("GO!!");
+				printf("GO!!");
 				matchStarted = true;
 				_vCam.CAMERA_MODE = _vCam.NORMAL_MODE;
 				Main.CONSOLE.setCamera(_vCam);

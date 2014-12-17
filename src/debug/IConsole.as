@@ -43,8 +43,15 @@ package debug
 			_tDelay = 20;
 		}
 		
-		public function show():void
+		public function show(e:MouseEvent = null):void
 		{
+			if (toggleVisuals.hasEventListener(MouseEvent.CLICK)) 
+			{
+				toggleVisuals.removeEventListener(MouseEvent.CLICK, show);
+				printf("removed listener");
+				toggleVisuals.addEventListener(MouseEvent.CLICK, hide);
+			}
+			
 			if (!_consoleVisible)
 			{
 				this.alpha = 1;
@@ -52,8 +59,14 @@ package debug
 			}
 		}
 		
-		public function hide():void
+		public function hide(e:MouseEvent = null):void
 		{
+			if (toggleVisuals.hasEventListener(MouseEvent.CLICK)) 
+			{
+				toggleVisuals.removeEventListener(MouseEvent.CLICK, hide);
+				printf("removed listener");
+				toggleVisuals.addEventListener(MouseEvent.CLICK, show);
+			}
 			if (_consoleVisible)
 			{
 				this.alpha = 0;
@@ -102,11 +115,12 @@ package debug
 		
 		public function init(location:DisplayObjectContainer):void 
 		{
-			println("[AE] :: DEBUG_MODE : TRUE CONSOLE\n[AE] :: Console mode changed.");
+			printf("[AE] :: DEBUG_MODE : TRUE CONSOLE\n[AE] :: Console mode changed.");
 			_selectionName.text = "Current Selection: Stage";
 			_selectionX.text = "" + stage.x;
 			_selectionY.text = "" + stage.y;
 			resData.text = "dix";
+			toggleVisuals.addEventListener(MouseEvent.CLICK, hide);
 			displayObjNum.text = addDebugMouseListeners(location).toString();
 		}
 		
