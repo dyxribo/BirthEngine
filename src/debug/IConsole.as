@@ -1,6 +1,7 @@
 package debug 
 {
 	import com.greensock.TweenLite;
+	import debug.printf;
 	import flash.display.DisplayObjectContainer;
 	import flash.events.MouseEvent;
 	import flash.system.System;
@@ -74,13 +75,10 @@ package debug
 			}
 		}
 		
-		public function appendOutput(...rest):void
+		public function appendOutput(output:String):void
 		{
-			for each(var item:* in rest) 
-			{
-				_outputPane.appendText(item);
-				_outputPane.scrollV = _outputPane.numLines - 3;
-			}
+			_outputPane.appendText(output);
+			_outputPane.scrollV = _outputPane.numLines - 3;
 		}
 		
 		public function setSelection(e:MouseEvent):void

@@ -2,7 +2,6 @@ package core
 {
 	import core.AI;
 	import core.Animation;
-	import debug.log;
 	import debug.printf;
 	import enums.CState;
 	import flash.display.BitmapData;
@@ -16,8 +15,6 @@ package core
 	 */
 	public class Character extends Sprite
 	{
-		private const LOG_ID:String = "Character";
-		
 		private const RIGHT:uint = 0;
 		private const LEFT:uint = 1;
 		private const MAX_COMBO_INTERVAL:uint = 250;
@@ -258,7 +255,7 @@ package core
 					_comboInterval = getTimer();
 					var key:String = _gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection);
 					_pressedKeys.push(key);
-					printf((key != undefined) ? key : null);
+					printf((key != "undefined") ? key : null);
 					_keyDelay = 5;
 					checkForCombo();
 				}
