@@ -1,5 +1,7 @@
 package core 
 {
+	import com.greensock.TweenLite;
+	import com.greensock.plugins.*;
 	import core.AI;
 	import core.Animation;
 	import debug.printf;
@@ -17,7 +19,7 @@ package core
 	{
 		private const RIGHT:uint = 0;
 		private const LEFT:uint = 1;
-		private const MAX_COMBO_INTERVAL:uint = 250;
+		private const MAX_COMBO_INTERVAL:uint = 300;
 		private const MAX_LAYDOWN_TIME:uint = 500;
 		
 		private var _playerID:uint;
@@ -91,6 +93,7 @@ package core
 		private var _pressingStart:Boolean;
 		private var _pressingSelect:Boolean;
 		private var _pressingHome:Boolean;
+		private var _keyLetGo:Boolean;
 		
 		
 		/**
@@ -130,9 +133,10 @@ package core
 			_comboInterval = 0;
 			_layDownDelay = 250;
 			_layDownTime = 0;
-			_keyDelay = 5;
+			_keyLetGo = true;
 			_comboDictionary = new Dictionary();
 			_pressedKeys = [];
+			TweenPlugin.activate([BlurFilterPlugin]);
 			
 			if (_isCPU)
 			{
@@ -241,25 +245,30 @@ package core
 			_pressingHome = _gamepad.isPressingHome;
 		}
 		
-		private function checkGamepad():void 
+		public function checkGamepad():void 
 		{
 			if (_pressingAny)
 			{
 				if (getTimer() - _comboInterval > MAX_COMBO_INTERVAL) 
 				{
 					_pressedKeys = [];
-					printf( "input array cleared");
+					//printf( "input array cleared");
 				}
-				if (!_keyDelay) 
+				
+				if (_keyLetGo) 
 				{
+					_keyLetGo = false;
 					_comboInterval = getTimer();
 					var key:String = _gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection);
 					_pressedKeys.push(key);
 					printf(key);
-					_keyDelay = 5;
+					printf("key is%s let go.", ((_keyLetGo) ? "" : " not"));
 					checkForCombo();
 				}
-				else --_keyDelay;
+			}
+			else
+			{
+				if (!_keyLetGo) _keyLetGo = true;
 			}
 			
 			if (_isOnGround)
@@ -378,6 +387,25 @@ package core
 			setState(CState.JUMP_RISING);
 		}
 		
+		private function superJump():void
+		{
+			_gravity = -_jumpSpeed * 1.5;
+			y -= _jumpSpeed;
+			
+			_isOnGround = false;
+			setState(CState.JUMP_RISING);
+		}
+		
+		private function dashFwd():void
+		{
+			TweenLite.to(this, 0.3, { x: x + ((_runSpeed*_runSpeed) * ((_facingDirection == 0) ? 1 : -1)), blurFilter: {blurX: 10, remove: true } } );
+		}
+		
+		private function dashBack():void
+		{
+			TweenLite.to(this, 0.3, { x: x + ((_runSpeed*_runSpeed) * ((_facingDirection == 0) ? -1 : 1)), blurFilter: {blurX: 10, remove: true } } );
+		}
+		
 		private function checkForCombo():void 
 		{
 			var comboFound:String = "";
@@ -386,7 +414,7 @@ package core
 				if (_pressedKeys.join(" ").indexOf((_comboDictionary[comboName] as Array).join(" ")) > -1)
 				{
 					comboFound = comboName;
-					printf( comboName);
+					this[comboName]();
 					break;
 				}
 			}

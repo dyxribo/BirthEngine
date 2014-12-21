@@ -15,7 +15,7 @@ package utils
 	{
 		public const NORMAL_MODE:String = "normal";
 		public const ZOOM_MODE:String = "zoom";
-		public const ARENA_MODE:String = "zoom";
+		public const ARENA_MODE:String = "arena";
 		public var CAMERA_MODE:String;
 		
 		private var _ROOT:Sprite;
@@ -52,7 +52,7 @@ package utils
 			_players = new Vector.<Character>();
 			_players.push(camData.playerOne, camData.playerTwo);
 			
-			x = y = _ROOT.x = _ROOT.y = 0;
+			x = y = 0;
 			
 			//graphics.beginFill(0x000000, .1);
 			//graphics.drawRect(0, 0, _originalWidth, _originalHeight);
@@ -90,7 +90,7 @@ package utils
 			{
 				if (width != _originalWidth || height != _originalHeight || _cameraResized)
 				{
-					TweenLite.to(this, _zoomSpeed, { width: _arenaBounds.width, height: _arenaBounds.height  } );
+					TweenLite.to(this, _zoomSpeed, { width: _cameraBounds.width, height: _cameraBounds.height  } );
 					_cameraResized = false;
 				}
 			}
@@ -103,43 +103,17 @@ package utils
 			}
 			else if (CAMERA_MODE == NORMAL_MODE)
 			{
-				x = (GameState.playerOne.x + GameState.playerTwo.x) / 2;
-				y = (GameState.playerOne.y + GameState.playerTwo.y) / 2;
+				//if ( (PsychoUtils.getCenter(_players[0], _players[1]).x) <= _cameraBounds.left) _PARENT.x = _cameraBounds.left;
+				//else _PARENT.x = PsychoUtils.getCenter(_players[0], _players[1]).x;
 				
-				if (!_hitBounds) 
-				{
-					_PARENT.x = -x + (_originalWidth / 2);
-					_PARENT.y = -y + (_originalHeight / 2);
-				}
-				else
-				{
-					_PARENT.x = _PARENT.x;
-					_PARENT.y = _PARENT.y;
-				}
+				// if the highest player's y position (plus half of the parent's height) is greater than or equal to the top of the camera boundary, follow the highest player's y position (plus half of the parent's height)
+				// otherwise, stay at the top of the boundary, and do go any further
+				if ( -((_players[0].y > _players[1].y) ? _players[0].y : _players[1].y) - (_PARENT.height/1.5) >= _cameraBounds.top) _PARENT.y = -((_players[0].y > _players[1].y) ? _players[0].y : _players[1].y) + (_PARENT.height/1.5);
+				else _PARENT.y = _cameraBounds.top;
 				
-				if ((x + (_originalWidth / 2) <= _arenaBounds.x) || (((x + width) - (_originalWidth/2)) >= (_arenaBounds.x + _arenaBounds.width) / 2))
-				{
-					_hitBounds = true;
-				}
-				else
-				{
-					_hitBounds = false;
-				}
-			
-				
+				if ( -((_players[0].y > _players[1].y) ? _players[0].y : _players[1].y) - (_PARENT.height/1.5) + (height)  <= _cameraBounds.bottom) _PARENT.y = -((_players[0].y > _players[1].y) ? _players[0].y : _players[1].y) + (_PARENT.height/1.5);
+				else _PARENT.y = _cameraBounds.bottom;
 			}
-		}
-		
-		public function set xPos(val:Number):void
-		{
-			x = val;
-			_PARENT.x = -x + (_originalWidth / 2);
-		}
-		
-		public function set yPos(val:Number):void
-		{
-			y = val;
-			_PARENT.y = -y + (_originalHeight / 2);
 		}
 		
 		public function destroy():void
@@ -153,8 +127,7 @@ package utils
 			var randPos:Number = Math.round(Math.random() * 2);
 			if (hitstun)
 			{
-				x = x + randPos;
-                y = y + randPos;
+				// shake gamestate
 			}
 		}
 	}

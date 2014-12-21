@@ -149,10 +149,11 @@ package debug
 				var avgFPS:uint = 0;
 				var vecLength:uint = _FPSVec.length;
 				for (var i:uint = 0; i < vecLength; i++) avgFPS += _FPSVec[i];
-				avgFPS /= vecLength;
+				avgFPS = avgFPS / vecLength;
 				
 				_FPSVec.push(Math.floor(_frames * 1000 / (_FPS - _FPSPrev)));
 				resData.text = "FPS: " + _FPSVec[vecLength] + " || AVG_FPS: " + avgFPS +" || MEM: " + Math.round(System.privateMemory / 1024 / 1024).toString() + " MB";
+				
 				_FPSPrev = _FPS;
 				_frames = 0;
 				

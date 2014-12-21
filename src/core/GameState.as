@@ -54,7 +54,7 @@ package core
 			
 			// INIT
 			_parent = parent;
-			HITSTUN = 20;
+			//HITSTUN = 20;
 			_countdownTimer = new Timer(1000);
 			_countdownTime = 4;
 			_gameArenaName = MatchObject.gameArena;
@@ -150,7 +150,9 @@ package core
 			playerOne.addAnimation("idle", 6, 10, true);
 			playerOne.addAnimation("walk", 12, 10, true);
 			playerOne.addAnimation("crouch", 3, 30, false);
-			playerOne.registerCombo("hadouken", ["b", "d", "f", "lp"])
+			playerOne.registerCombo("superJump", ["d", "u"])
+			playerOne.registerCombo("dashFwd", ["f", "f"])
+			playerOne.registerCombo("dashBack", ["b", "b"])
 			addChild(playerOne);
 			playerOne.playAnimation("idle");
 			
@@ -186,6 +188,7 @@ package core
 		{
 			_vCam = new VirtualCamera( { root: _parent, parent: this, width: stage.stageWidth, height: stage.stageHeight, bounds: new Rectangle(0, 0, _gameArena.terrainRect.width, this.height * 3), stageBounds: _gameArena.terrainRect, xSpeed: 1, ySpeed: .5, zoomSpeed: .5, playerOne: playerOne, playerTwo: playerTwo } );
 			_vCam.CAMERA_MODE = _vCam.NORMAL_MODE;
+			printf("camera mode after it was set to normal is %s.", _vCam.CAMERA_MODE);
 			addChild(_vCam);
 			setupControllers();
 		}
@@ -211,8 +214,8 @@ package core
 			{
 				printf("GO!!");
 				matchStarted = true;
-				_vCam.CAMERA_MODE = _vCam.NORMAL_MODE;
-				Main.CONSOLE.setCamera(_vCam);
+				
+				if (Main.DEBUG) Main.CONSOLE.setCamera(_vCam);
 				_countdownTimer.stop();
 				_countdownTimer.removeEventListener(TimerEvent.TIMER, countdown);
 			}

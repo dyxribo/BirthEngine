@@ -25,7 +25,6 @@ package debug
 				if (specifiers[i] == "%%") rest.unshift("");
 			}
 		}
-		
 		Main.CONSOLE.appendOutput(format);	
 	}
 }

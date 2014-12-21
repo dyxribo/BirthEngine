@@ -85,6 +85,24 @@ package utils
 			return Math.sqrt(distX * distX + distY * distY);
 		}
 		
+		static public function getCenter(...rest):Point
+		{
+			var totalX:Number = 0;
+			var totalY:Number = 0;
+			var totalItems:uint = 0;
+			var finalPoint:Point = new Point(0,0);
+			
+			for (var i:uint = 0; i < rest.length; i++ )
+			{
+				totalX += rest[i].x;
+				totalY += rest[i].y;
+				++totalItems;
+			}
+			finalPoint.x = totalX / totalItems;
+			finalPoint.x = totalY / totalItems;
+			return finalPoint;
+		}
+		
 		/**
 		 * <b>Creates then returns a sprite.</b>
 		 * @param	fill fill = {color: whatevs, alpha: whatevs};

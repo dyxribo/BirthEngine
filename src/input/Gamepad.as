@@ -1,5 +1,9 @@
 package input 
 {
+	import core.GameState;
+	import debug.printf;
+	import events.UMIBEvent;
+	import events.UMIBEventManager;
 	import flash.display.DisplayObject;
 	import input.Key;
 	/**
@@ -8,11 +12,11 @@ package input
 	 */
 	public final class Gamepad extends Object
 	{
-		private const _LOGID:String = "Gamepad";
-		
 		static public const NULL_CONTROLS:Object = { LEFT: 0, UP: 0, RIGHT: 0, DOWN: 0, C_LEFT: 0, C_UP: 0, C_RIGHT: 0, C_DOWN: 0, CROSS: 0, SQUARE: 0, CIRCLE: 0, TRIANGLE: 0, L1: 0, L2: 0, L3: 0, R1: 0, R2: 0, R3: 0, START: 0, SELECT: 0, HOME: 0 };
 		static public const P1_DEFAULT:Object = { LEFT: Key.LEFT, UP: Key.UP, RIGHT: Key.RIGHT, DOWN: Key.DOWN, C_LEFT: 0, C_UP: 0, C_RIGHT: 0, C_DOWN: 0, CROSS: Key.A, SQUARE: Key.S, CIRCLE: Key.D, TRIANGLE: Key.F, L1: Key.Q, L2: Key.W, L3: Key.E, R1: Key.Z, R2: Key.X, R3: Key.C, START: Key.ENTER, SELECT: Key.SPACEBAR, HOME: Key.ONE };
 		
+		static private var _currentButtonDown:uint;
+		static private var _currentButtonUp:uint;
 		public var CONTROLLER_ID:String = "";
 		public var LEFT:uint;
 		public var UP:uint;
@@ -113,23 +117,33 @@ package input
 			{
 				Key.init();
 				Key.beginCapture(Main.STAGE);
-				
+				Main.STAGE.addEventListener(UMIBEvent.KEY_PRESSED, onKeyPress);
+				Main.STAGE.addEventListener(UMIBEvent.KEY_RELEASED, onKeyReleased);
 			}
+		}
+		
+		static private function onKeyReleased(e:UMIBEvent):void 
+		{
+			_currentButtonUp = e.data.key;
+			_currentButtonDown = 0;
+		}
+		
+		static private function onKeyPress(e:UMIBEvent):void 
+		{
+			_currentButtonDown = e.data.key;
+			_currentButtonUp = 0;
 		}
 		
 		static public function unplug():void
 		{
-			if (Key.m_initialized)
-			{
-				Key.endCapture();
-			}
+			if (Key.m_initialized) Key.endCapture();
 		}
 		
-		public function reconnect(stage:DisplayObject):void
+		public function reconnect():void
 		{
 			Key.endCapture();
 			Key.init();
-			Key.beginCapture(stage);
+			Key.beginCapture(Main.STAGE);
 		}
 		
 		public function getKeyAlias(currentButtonDown:int, facingDirection:uint = 3):* 
@@ -167,7 +181,12 @@ package input
 		
 		public function get currentButtonDown():int
 		{
-			return Key.currentKeyDown();
+			return _currentButtonDown;
+		}
+		
+		public function get currentButtonUp():int
+		{
+			return _currentButtonUp;
 		}
 		
 		public function get isPressingLeft():Boolean

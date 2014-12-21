@@ -3,6 +3,7 @@ package
 	import com.greensock.TweenLite;
 	import core.GameState;
 	import debug.IConsole;
+	import debug.printf;
 	import enums.MatchObject;
 	import enums.MatchTime;
 	import enums.MatchType;
@@ -11,6 +12,7 @@ package
 	import flash.display.Sprite;
 	import flash.display.Stage;
 	import flash.events.Event;
+	import flash.utils.getTimer;
 	import input.Gamepad;
 	
 	/**
@@ -20,6 +22,7 @@ package
 	public class Main extends Sprite 
 	{
 		static public const FRAMERATE:uint = 60;
+		static public var DEBUG:Boolean = true;
 		static public var STAGE:Stage;
 		static public var CONSOLE:IConsole;
 		
@@ -36,6 +39,7 @@ package
 			removeEventListener(Event.ADDED_TO_STAGE, init);
 			STAGE = stage;
 			// ENTRY POINT
+			
 			CONSOLE = new IConsole();
 			addChild(Main.CONSOLE);
 			Main.CONSOLE.init(this);
