@@ -2,7 +2,7 @@ package utils
 {
 	import avmplus.getQualifiedClassName;
 	import com.hurlant.util.Base64;
-	import debug.log;
+	import debug.printf;
 	import events.UMIBEvent;
 	import events.UMIBEventManager;
 	import flash.display.DisplayObject;
@@ -34,7 +34,6 @@ package utils
 	public class PsychoUtils
 	{
 		static public const XORKEY:String = "devtaku";
-		static public const _LOG_ID:String = "PsychoUtils";
 		
 		protected static var eDispatcher:EventDispatcher;
 		
@@ -480,7 +479,7 @@ package utils
 		
 		static private function onSaveIOError(e:IOErrorEvent):void
 		{
-			log.it(_LOG_ID, "There was an IO error.");
+			printf("There was an IO error.");
 			fileOperationCancelled = true;
 			fileSessionComplete = true;
 			
@@ -489,7 +488,7 @@ package utils
 		
 		static private function onSaveSecurityError(e:SecurityErrorEvent):void
 		{
-			log.it(_LOG_ID, "There was a security error.");
+			printf("There was a security error.");
 			fileOperationCancelled = true;
 			fileSessionComplete = true;
 			
@@ -498,12 +497,12 @@ package utils
 		
 		static private function onSaveProgress(e:ProgressEvent):void
 		{
-			log.it(_LOG_ID, "Saved " + e.bytesLoaded + " bytes of " + e.bytesTotal + " total.");
+			printf("Saved " + e.bytesLoaded + " bytes of " + e.bytesTotal + " total.");
 		}
 		
 		static private function onSaveComplete(e:Event):void
 		{
-			log.it(_LOG_ID, "File saved!");
+			printf("File saved!");
 			fileSaveSuccess = true;
 			fileSessionComplete = true;
 			
@@ -512,7 +511,7 @@ package utils
 		
 		static private function onSaveCancel(e:Event):void
 		{
-			log.it(_LOG_ID, "The save request was terminated by the user.");
+			printf("The save request was terminated by the user.");
 			fileOperationCancelled = true;
 			fileSessionComplete = true;
 			fileSaveSuccess = false;
@@ -552,7 +551,7 @@ package utils
 		
 		static private function onFileLoadError(e:IOErrorEvent):void 
 		{
-			log.it(_LOG_ID, "File could not be loaded. Are you sure it has R/W permissions?");
+			printf("File could not be loaded. Are you sure it has R/W permissions?");
 		}
 	}
 }

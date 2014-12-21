@@ -157,6 +157,7 @@ package input
 			else if (currentButtonDown == R2) return "p3";
 			else if (currentButtonDown == C_UP) return "cu";
 			else if (currentButtonDown == C_DOWN) return "cd";
+			else return "key pressed does not have an alias";
 		}
 		
 		public function get isPressingAnyButton():Boolean

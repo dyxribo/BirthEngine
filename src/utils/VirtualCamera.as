@@ -3,6 +3,7 @@ package utils
 	import core.GameState;
 	import com.greensock.TweenLite;
 	import core.Character;
+	import debug.printf;
 	import flash.display.MovieClip;
 	import flash.display.Sprite;
 	import flash.geom.Rectangle;
@@ -14,8 +15,10 @@ package utils
 	{
 		public const NORMAL_MODE:String = "normal";
 		public const ZOOM_MODE:String = "zoom";
+		public const ARENA_MODE:String = "zoom";
 		public var CAMERA_MODE:String;
 		
+		private var _ROOT:Sprite;
 		private var _PARENT:Sprite;
 		private var _HUD:MovieClip;
 		private var _originalWidth:int;
@@ -36,6 +39,7 @@ package utils
 		 */
 		public function VirtualCamera(camData:Object) 
 		{
+			_ROOT = camData.root;
 			_PARENT = camData.parent;
 			_HUD = camData.HUD;
 			_originalWidth = camData.width;
@@ -48,14 +52,14 @@ package utils
 			_players = new Vector.<Character>();
 			_players.push(camData.playerOne, camData.playerTwo);
 			
-			/*graphics.beginFill(0x000000, .1);
-			graphics.drawRect(0, 0, _originalWidth, _originalHeight);
-			graphics.endFill();*/
+			x = y = _ROOT.x = _ROOT.y = 0;
 			
-			x = y = 0;
+			//graphics.beginFill(0x000000, .1);
+			//graphics.drawRect(0, 0, _originalWidth, _originalHeight);
+			//graphics.endFill();
+			
 			width = _originalWidth;
 			height = _originalHeight;
-			trace("width " + width);
 		}
 		
 		public function PERFORMALL():void
@@ -82,6 +86,14 @@ package utils
 					_cameraResized = true;
 				}
 			}
+			else if (CAMERA_MODE == ARENA_MODE)
+			{
+				if (width != _originalWidth || height != _originalHeight || _cameraResized)
+				{
+					TweenLite.to(this, _zoomSpeed, { width: _arenaBounds.width, height: _arenaBounds.height  } );
+					_cameraResized = false;
+				}
+			}
 		}
 		
 		private function updateCameraView():void 
@@ -89,7 +101,7 @@ package utils
 			if (CAMERA_MODE == ZOOM_MODE)
 			{
 			}
-			else
+			else if (CAMERA_MODE == NORMAL_MODE)
 			{
 				x = (GameState.playerOne.x + GameState.playerTwo.x) / 2;
 				y = (GameState.playerOne.y + GameState.playerTwo.y) / 2;
@@ -105,7 +117,7 @@ package utils
 					_PARENT.y = _PARENT.y;
 				}
 				
-				if ((x < _arenaBounds.x - 100) && ((x + width) > (_arenaBounds.x + _arenaBounds.width)))
+				if ((x + (_originalWidth / 2) <= _arenaBounds.x) || (((x + width) - (_originalWidth/2)) >= (_arenaBounds.x + _arenaBounds.width) / 2))
 				{
 					_hitBounds = true;
 				}

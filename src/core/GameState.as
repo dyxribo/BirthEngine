@@ -30,15 +30,16 @@ package core
 		private const STAGE_DIRECTORY:String = "res/stages/";
 		static public var HITSTUN:uint;
 		static public var matchStarted:Boolean;
-		
 		static public var playerOne:Character;
 		static public var playerTwo:Character;
-		private var playerOneTeam:Array;
-		private var playerTwoTeam:Array;
-		private var playerOneCharacter:uint;
-		private var playerTwoCharacter:uint;
-		private var playerOneData:Object;
-		private var playerTwoData:Object;
+		
+		private var _parent:Sprite;
+		private var _playerOneTeam:Array;
+		private var _playerTwoTeam:Array;
+		private var _playerOneCharacter:uint;
+		private var _playerTwoCharacter:uint;
+		private var _playerOneData:Object;
+		private var _playerTwoData:Object;
 		private var _gameArenaName:String;
 		private var _gameArena:Arena;
 		private var _vCam:VirtualCamera;
@@ -47,40 +48,41 @@ package core
 		private var _countdownTimer:Timer;
 		private var _countdownTime:uint;
 		
-		public function GameState() 
+		public function GameState(parent:Sprite) 
 		{
 			super();
 			
 			// INIT
+			_parent = parent;
 			HITSTUN = 20;
 			_countdownTimer = new Timer(1000);
 			_countdownTime = 4;
 			_gameArenaName = MatchObject.gameArena;
-			playerOneTeam = MatchObject.playerOneTeam;
-			playerTwoTeam = MatchObject.playerTwoTeam;
-			playerOneCharacter = 0;
-			playerTwoCharacter = 0;
+			_playerOneTeam = MatchObject.playerOneTeam;
+			_playerTwoTeam = MatchObject.playerTwoTeam;
+			_playerOneCharacter = 0;
+			_playerTwoCharacter = 0;
 			
-			playerOneData = { };
-			playerOneData.isCPU = (!MatchObject.playerOneHuman) ?  (true) : (false);
-			playerOneData.controller = MatchObject.gamepadOne;
-			playerOneData.teamLength = playerOneTeam.length;
-			for (var i:int = 0; i < playerOneTeam.length; i++)
+			_playerOneData = { };
+			_playerOneData.isCPU = (!MatchObject.playerOneHuman) ?  (true) : (false);
+			_playerOneData.controller = MatchObject.gamepadOne;
+			_playerOneData.teamLength = _playerOneTeam.length;
+			for (var i:int = 0; i < _playerOneTeam.length; i++)
 			{
-				playerOneData["c" + i] = { };
-				playerOneData["c" + i].name = playerOneTeam[i];
-				playerOneData["c" + i].stats = Stats[playerOneData["c" + i].name];
+				_playerOneData["c" + i] = { };
+				_playerOneData["c" + i].name = _playerOneTeam[i];
+				_playerOneData["c" + i].stats = Stats[_playerOneData["c" + i].name];
 			}
 			
-			playerTwoData = { };
-			playerTwoData.isCPU = (!MatchObject.playerTwoHuman) ?  (true) : (false);
-			playerTwoData.controller = MatchObject.gamepadTwo;
-			playerTwoData.teamLength = playerTwoTeam.length;
-			for (var j:int = 0; j < playerTwoTeam.length; j++)
+			_playerTwoData = { };
+			_playerTwoData.isCPU = (!MatchObject.playerTwoHuman) ?  (true) : (false);
+			_playerTwoData.controller = MatchObject.gamepadTwo;
+			_playerTwoData.teamLength = _playerTwoTeam.length;
+			for (var j:int = 0; j < _playerTwoTeam.length; j++)
 			{
-				playerTwoData["c" + j] = { };
-				playerTwoData["c" + j].name = playerTwoTeam[j];
-				playerTwoData["c" + j].stats = Stats[playerTwoData["c" + j].name];
+				_playerTwoData["c" + j] = { };
+				_playerTwoData["c" + j].name = _playerTwoTeam[j];
+				_playerTwoData["c" + j].stats = Stats[_playerTwoData["c" + j].name];
 			}
 			// END INIT
 			
@@ -96,15 +98,15 @@ package core
 			_resourceLoader.addResource( { name: _gameArenaName, url: STAGE_DIRECTORY + _gameArenaName + ".png" }, ResourceType.DISPLAY_OBJECT);
 			//_resourceLoader.addResource( { name: _gameArenaName+"JSON", url: STAGE_DIRECTORY + _gameArenaName + ".js" }, ResourceType.PLAIN_TEXT);
 			
-			for (var i:uint = 0; i < playerOneTeam.length; i++ )
+			for (var i:uint = 0; i < _playerOneTeam.length; i++ )
 			{
-				_resourceLoader.addResource( {name: "team1Char"+i, url: CHAR_DIRECTORY + playerOneTeam[i] + ".png" }, ResourceType.DISPLAY_OBJECT);
-				_resourceLoader.addResource( {name: "team1Char"+i+"JSON", url: CHAR_DIRECTORY + playerOneTeam[i] + ".js" }, ResourceType.PLAIN_TEXT);
+				_resourceLoader.addResource( {name: "team1Char"+i, url: CHAR_DIRECTORY + _playerOneTeam[i] + ".png" }, ResourceType.DISPLAY_OBJECT);
+				_resourceLoader.addResource( {name: "team1Char"+i+"JSON", url: CHAR_DIRECTORY + _playerOneTeam[i] + ".js" }, ResourceType.PLAIN_TEXT);
 			}
-			for (var j:uint = 0; j < playerTwoTeam.length; j++ )
+			for (var j:uint = 0; j < _playerTwoTeam.length; j++ )
 			{
-				_resourceLoader.addResource( { name: "team2Char" + j, url: CHAR_DIRECTORY + playerTwoTeam[j] + ".png" }, ResourceType.DISPLAY_OBJECT);
-				_resourceLoader.addResource( {name: "team2Char"+j+"JSON", url: CHAR_DIRECTORY + playerTwoTeam[j] + ".js" }, ResourceType.PLAIN_TEXT);
+				_resourceLoader.addResource( { name: "team2Char" + j, url: CHAR_DIRECTORY + _playerTwoTeam[j] + ".png" }, ResourceType.DISPLAY_OBJECT);
+				_resourceLoader.addResource( {name: "team2Char"+j+"JSON", url: CHAR_DIRECTORY + _playerTwoTeam[j] + ".js" }, ResourceType.PLAIN_TEXT);
 			}
 			_resourceLoader.loadResources();
 			UMIBEventManager.addEventListener(UMIBEvent.LOAD_COMPLETE, loadArena);
@@ -119,21 +121,21 @@ package core
 			Resources.addBitmapData( { name: _gameArenaName, data: e.data[_gameArenaName] } );
 			//Resources.addAnimData( {name: _gameArenaName, data: e.data[_gameArenaName+"JSON"]});
 			
-			for (var i:int = 0; i < playerOneTeam.length; i++)
+			for (var i:int = 0; i < _playerOneTeam.length; i++)
 			{
-				Resources.addBitmapData( {name: playerOneTeam[i], data: e.data["team1Char"+i] } );
+				Resources.addBitmapData( {name: _playerOneTeam[i], data: e.data["team1Char"+i] } );
 			}
-			for (var j:int = 0; j < playerTwoTeam.length; j++)
+			for (var j:int = 0; j < _playerTwoTeam.length; j++)
 			{
-				Resources.addBitmapData( {name: playerOneTeam[j], data: e.data["team2Char"+j] } );
+				Resources.addBitmapData( {name: _playerOneTeam[j], data: e.data["team2Char"+j] } );
 			}
-			for (var k:int = 0; k < playerOneTeam.length; k++)
+			for (var k:int = 0; k < _playerOneTeam.length; k++)
 			{
-				Resources.addAnimData( {name: playerOneTeam[k], data: e.data["team1Char"+k+"JSON"] } );
+				Resources.addAnimData( {name: _playerOneTeam[k], data: e.data["team1Char"+k+"JSON"] } );
 			}
-			for (var l:int = 0; l < playerTwoTeam.length; l++)
+			for (var l:int = 0; l < _playerTwoTeam.length; l++)
 			{
-				Resources.addAnimData( {name: playerOneTeam[l], data: e.data["team2Char"+l+"JSON"] } );
+				Resources.addAnimData( {name: _playerOneTeam[l], data: e.data["team2Char"+l+"JSON"] } );
 			}
 			
 			_gameArena = new Arena(_gameArenaName, Resources.spriteSheets[_gameArenaName]);
@@ -143,8 +145,8 @@ package core
 		
 		private function loadCharacters():void 
 		{
-			var _p1Data:Object = PsychoUtils.mergeObjects(Stats[(playerOneTeam[playerOneCharacter] as String).toUpperCase()], { controller: MatchObject.gamepadOne }, playerOneData );
-			playerOne = new Character(Resources.spriteSheets[playerOneTeam[playerOneCharacter]], _p1Data , Resources.animationData[playerOneTeam[playerOneCharacter]]);
+			var _p1Data:Object = PsychoUtils.mergeObjects(Stats[(_playerOneTeam[_playerOneCharacter] as String).toUpperCase()], { controller: MatchObject.gamepadOne }, _playerOneData );
+			playerOne = new Character(Resources.spriteSheets[_playerOneTeam[_playerOneCharacter]], _p1Data , Resources.animationData[_playerOneTeam[_playerOneCharacter]]);
 			playerOne.addAnimation("idle", 6, 10, true);
 			playerOne.addAnimation("walk", 12, 10, true);
 			playerOne.addAnimation("crouch", 3, 30, false);
@@ -152,8 +154,8 @@ package core
 			addChild(playerOne);
 			playerOne.playAnimation("idle");
 			
-			var _p2Data:Object = PsychoUtils.mergeObjects(Stats[(playerTwoTeam[playerTwoCharacter] as String).toUpperCase()], { controller: MatchObject.gamepadTwo }, playerTwoData );
-			playerTwo = new Character(Resources.spriteSheets[playerTwoTeam[playerTwoCharacter]], _p2Data, Resources.animationData[playerTwoTeam[playerTwoCharacter]]);
+			var _p2Data:Object = PsychoUtils.mergeObjects(Stats[(_playerTwoTeam[_playerTwoCharacter] as String).toUpperCase()], { controller: MatchObject.gamepadTwo }, _playerTwoData );
+			playerTwo = new Character(Resources.spriteSheets[_playerTwoTeam[_playerTwoCharacter]], _p2Data, Resources.animationData[_playerTwoTeam[_playerTwoCharacter]]);
 			playerTwo.addAnimation("idle", 7, 10, true);
 			playerTwo.addAnimation("walk", 12, 10, true);
 			playerTwo.addAnimation("crouch", 3, 30, false);
@@ -182,7 +184,7 @@ package core
 		
 		private function loadCamera():void 
 		{
-			_vCam = new VirtualCamera( { parent: this, width: stage.stageWidth, height: stage.stageHeight, bounds: new Rectangle(0, 0, _gameArena.terrainRect.width, this.height * 3), stageBounds: _gameArena.terrainRect, xSpeed: 1, ySpeed: .5, zoomSpeed: .5, playerOne: playerOne, playerTwo: playerTwo } );
+			_vCam = new VirtualCamera( { root: _parent, parent: this, width: stage.stageWidth, height: stage.stageHeight, bounds: new Rectangle(0, 0, _gameArena.terrainRect.width, this.height * 3), stageBounds: _gameArena.terrainRect, xSpeed: 1, ySpeed: .5, zoomSpeed: .5, playerOne: playerOne, playerTwo: playerTwo } );
 			_vCam.CAMERA_MODE = _vCam.NORMAL_MODE;
 			addChild(_vCam);
 			setupControllers();
@@ -211,7 +213,6 @@ package core
 				matchStarted = true;
 				_vCam.CAMERA_MODE = _vCam.NORMAL_MODE;
 				Main.CONSOLE.setCamera(_vCam);
-				Main.CONSOLE.mouseEnabled = false;
 				_countdownTimer.stop();
 				_countdownTimer.removeEventListener(TimerEvent.TIMER, countdown);
 			}

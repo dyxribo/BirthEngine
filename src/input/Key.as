@@ -1,6 +1,6 @@
 ﻿package input 
 {	
-	import debug.log;
+	import debug.printf;
 	import events.UMIBEvent;
 	import events.UMIBEventManager;
 	import flash.display.DisplayObject;
@@ -34,7 +34,7 @@
 			m_captureStarted = false;
 		
 			nameKeys();
-			log.it(_LOGID, "Key class initialized!");
+			printf("Key class initialized!");
 		}
 		
 		static private function nameKeys():void 
@@ -166,7 +166,7 @@
 		{
 			if (!m_initialized)
 			{
-				log.it(_LOGID, "Error: Key.init() was never called!");
+				printf("Error: Key.init() was never called!");
 				return;
 			}
 			if (targetObject != null)
@@ -181,10 +181,10 @@
 				m_targetObject.addEventListener(Event.DEACTIVATE,Key.resetKeys);
 				m_targetObject.addEventListener(Event.ACTIVATE, Key.restartKeys);
 				m_captureStarted = true;
-				log.it(_LOGID, "Key class activated!");
+				printf("Key class activated!");
 			} else
 			{
-				log.it(_LOGID, "Error: null target passed to Key.as!");
+				printf("Error: null target passed to Key.as!");
 			}
 		}
 		
@@ -195,7 +195,7 @@
 		{
 			if (!m_initialized)
 			{
-				log.it(_LOGID, "Error: Key.init() was never called!");
+				printf("Error: Key.init() was never called!");
 				return;
 			}
 			if (m_captureStarted)
@@ -207,10 +207,10 @@
 				m_targetObject = null;
 				m_captureStarted = false;
 				resetKeys(null);
-				log.it(_LOGID,"Key class deactivated.");
+				printf("Key class deactivated.");
 			} else
 			{
-				log.it(_LOGID,"Warning: attempt to end capture when it was never started!");
+				printf("Warning: attempt to end capture when it was never started!");
 			}
 		}
 		
@@ -247,7 +247,7 @@
 		{
 			if (!m_initialized)
 			{
-				log.it(_LOGID, "Error, Key.init() was never called");
+				printf("Error, Key.init() was never called");
 				return;
 			}
 			//Sets all key states to false
@@ -401,6 +401,5 @@
 		static public const DELETE:int = 46;
 		static public const HELP:int = 47;
 		static public const NUM_LOCK:int = 144;
-		static public const _LOGID:String = "Key";
 	}
 }

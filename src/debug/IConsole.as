@@ -6,6 +6,7 @@ package debug
 	import flash.events.MouseEvent;
 	import flash.system.System;
 	import flash.text.TextField;
+	import flash.utils.getTimer;
 	import input.Key;
 	import utils.VirtualCamera;
 	/**
@@ -24,10 +25,12 @@ package debug
 		private var _selectionY:TextField;
 		private var _vCam:VirtualCamera;
 		private var _totalChildren:uint;
+		private var _frames:uint;
 		private var _FPS:uint;
-		private var _FPSTimer:uint;
-		private var _FPSVec:Vector.<uint>;
+		private var _FPSPrev:uint;
+		private var _FPSVec:Vector.<int>;
 		private var _tDelay:uint;
+		
 		
 		public function IConsole() 
 		{
@@ -39,8 +42,8 @@ package debug
 			_selectionY = selectionY;
 			_totalChildren = 0;
 			_FPS = 0;
-			_FPSTimer = 60;
-			_FPSVec = new Vector.<uint>();
+			_FPSPrev = 0;
+			_FPSVec = new Vector.<int>();
 			_tDelay = 20;
 		}
 		
@@ -66,8 +69,8 @@ package debug
 			{
 				toggleVisuals.removeEventListener(MouseEvent.CLICK, hide);
 				printf("removed listener");
-				toggleVisuals.addEventListener(MouseEvent.CLICK, show);
 			}
+			
 			if (_consoleVisible)
 			{
 				this.alpha = 0;
@@ -75,9 +78,9 @@ package debug
 			}
 		}
 		
-		public function appendOutput(output:String):void
+		public function appendOutput(output:String = ""):void
 		{
-			_outputPane.appendText(output);
+			_outputPane.appendText(output+"\n");
 			_outputPane.scrollV = _outputPane.numLines - 3;
 		}
 		
@@ -89,8 +92,8 @@ package debug
 		public function update():void
 		{
 			_mouseXY.text = "X: " + mouseX + ", Y: " + mouseY;
-			currentFPS();
-			testMemory();
+			incrementFPS();
+			performanceTest();
 			if (_vCam) _cameraXY.text = _vCam.x + ", " + _vCam.y;
 			if (_selection) 
 			{
@@ -113,41 +116,47 @@ package debug
 		
 		public function init(location:DisplayObjectContainer):void 
 		{
-			printf("[AE] :: DEBUG_MODE : TRUE CONSOLE\n[AE] :: Console mode changed.");
+			_consoleVisible = true;
+			
+			resData.text = "Initiating performance test...";
 			_selectionName.text = "Current Selection: Stage";
+			printf("console initated.");
+			
 			_selectionX.text = "" + stage.x;
 			_selectionY.text = "" + stage.y;
-			resData.text = "dix";
-			toggleVisuals.addEventListener(MouseEvent.CLICK, hide);
 			displayObjNum.text = addDebugMouseListeners(location).toString();
+			
+			toggleVisuals.addEventListener(MouseEvent.CLICK, hide);
 		}
 		
-		private function currentFPS():void 
+		private function incrementFPS():void 
 		{
-			_FPS++;
+			_frames++;
 		}
 		
-		private function testMemory():void 
+		private function performanceTest():void 
 		{
-			if (!_FPSTimer)
+			_FPS = getTimer();
+			
+			if (_FPSVec.length > 4)
 			{
-				_FPSVec.push(_FPS);
-				
-				if(_FPSVec.length == 4)
-				{
-					for (var i:int = 1; i < _FPSVec.length; i++)
-					{	
-						_FPSVec[0] += _FPSVec[i];
-					}
-					_FPSVec.splice(1, _FPSVec.length - 1);
-					_FPSVec[0] /= 4;
-				}
-				
-				resData.text = "FPS: " + _FPS + " || AVG_FPS: " + Math.round(_FPSVec[0]) + " || MEM: " + Math.round(System.privateMemory / 1024 / 1024).toString() + " MB";
-				_FPS = 0;
-				_FPSTimer = 60;
+				_FPSVec[0] = _FPSVec[_FPSVec.length - 1];
+				_FPSVec.pop();
 			}
-			else --_FPSTimer;
+			
+			if (_FPS - _FPSPrev >= 1000) 
+			{
+				var avgFPS:uint = 0;
+				var vecLength:uint = _FPSVec.length;
+				for (var i:uint = 0; i < vecLength; i++) avgFPS += _FPSVec[i];
+				avgFPS /= vecLength;
+				
+				_FPSVec.push(Math.floor(_frames * 1000 / (_FPS - _FPSPrev)));
+				resData.text = "FPS: " + _FPSVec[vecLength] + " || AVG_FPS: " + avgFPS +" || MEM: " + Math.round(System.privateMemory / 1024 / 1024).toString() + " MB";
+				_FPSPrev = _FPS;
+				_frames = 0;
+				
+			}
 		}
 		
 		public function addDebugMouseListeners(dOC:DisplayObjectContainer):uint

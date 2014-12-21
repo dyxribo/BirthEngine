@@ -41,7 +41,7 @@ package
 			Main.CONSOLE.init(this);
 			
 			synthesizeMatchData();
-			_gameState = new GameState();
+			_gameState = new GameState(this);
 			addChild(_gameState);
 			swapChildren(_gameState, CONSOLE);
 			drawLoadScreen();

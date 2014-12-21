@@ -255,7 +255,7 @@ package core
 					_comboInterval = getTimer();
 					var key:String = _gamepad.getKeyAlias(_gamepad.currentButtonDown, _facingDirection);
 					_pressedKeys.push(key);
-					printf((key != "undefined") ? key : null);
+					printf(key);
 					_keyDelay = 5;
 					checkForCombo();
 				}
